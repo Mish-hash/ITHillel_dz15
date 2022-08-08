@@ -45,6 +45,7 @@ function render(obj) {
     const divCharacters = document.getElementById('characters');
 
     for(elem of obj) {
+        if(elem === undefined || elem ==='undefined[object Object]') continue;
         const divCard = document.createElement('div');
         divCard.classList.add('card');
 
@@ -60,7 +61,7 @@ function render(obj) {
                     divLiveStatus.classList.add('live-status');
                     if (elem.status === 'Dead') divLiveStatus.classList.add('dead');
                     const pStatus = document.createElement('p');
-                    pStatus.innerHTML = elem.status;
+                    pStatus.innerHTML = `${elem.species} -- ${elem.status}`;
                     divStatus.append(divLiveStatus, pStatus);
 
                 divTitle.append(h1, divStatus);
@@ -87,5 +88,49 @@ function render(obj) {
 };
 
 
+// Фильтр из формы
 
+const form = document.forms[0];
+
+form.addEventListener('change', ()=>{
+
+    let newData = [];
+
+    const male = document.getElementById('male').checked ? 'Male' : null;
+    const female = document.getElementById('female').checked ? 'Female' : null;
+    const alive = document.getElementById('alive').checked ? 'Alive' : null;
+    const dead = document.getElementById('dead').checked ? 'Dead' : null;
+
+
+    for (i in characters) {
+
+        if (
+            (characters[i].gender === male || characters[i].gender === female) &&
+            (characters[i].status === alive || characters[i].status === dead)
+
+        ) {
+            newData[i] += characters[i];
+        } else if (
+            (characters[i].gender === male || characters[i].gender === female) &&
+            (alive === null && dead === null)
+        ) {
+            newData[i] = characters[i];
+        } else if (
+            (male === null ||female === null) &&
+            (characters[i].status === alive || characters[i].status === dead)
+        ) {
+            newData[i] = characters[i];
+        } else if (male === null && female === null && alive === null && dead === null) {
+            newData[i] = characters[i];
+        }
+
+
+    }
+
+    const charactersOld = document.getElementById('characters');
+    while(charactersOld.firstChild) {
+        charactersOld.removeChild(charactersOld.firstChild);
+    }
+    render(newData)
+});
 
